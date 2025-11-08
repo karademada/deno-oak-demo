@@ -5,6 +5,7 @@ import {
   createBookSchema,
   updateBookSchema,
 } from "./validation.ts";
+import { authMiddleware } from "./auth.middleware.ts";
 
 const kv = await Deno.openKv();
 const bookRouter = new Router();
@@ -16,7 +17,7 @@ async function getBookById(id: string): Promise<Book | null> {
 }
 
 bookRouter
-  .get("/:id", async (ctx) => {
+  .get("/:id", authMiddleware, async (ctx) => {
     try {
       const id = ctx.params.id!;
       const book = await getBookById(id);
@@ -32,7 +33,7 @@ bookRouter
       ctx.response.body = { message: "Internal server error" };
     }
   })
-  .get("/", async (ctx) => {
+  .get("/", authMiddleware, async (ctx) => {
     try {
       const books: Book[] = [];
       for await (const entry of kv.list<Book>({ prefix: ["books"] })) {
@@ -45,7 +46,7 @@ bookRouter
       ctx.response.body = { message: "Internal server error" };
     }
   })
-  .post("/", validateBody(createBookSchema), async (ctx) => {
+  .post("/", authMiddleware, validateBody(createBookSchema), async (ctx) => {
     try {
       const body = await ctx.request.body.json();
       const id = crypto.randomUUID();
@@ -59,7 +60,7 @@ bookRouter
       ctx.response.body = { message: "Internal server error" };
     }
   })
-  .patch("/:id", validateBody(updateBookSchema), async (ctx) => {
+  .patch("/:id", authMiddleware, validateBody(updateBookSchema), async (ctx) => {
     try {
       const body = await ctx.request.body.json();
       const id = ctx.params.id!;
@@ -81,7 +82,7 @@ bookRouter
       ctx.response.body = { message: "Internal server error" };
     }
   })
-  .delete("/:id", async (ctx) => {
+  .delete("/:id", authMiddleware, async (ctx) => {
     try {
       const id = ctx.params.id!;
       const existingBook = await getBookById(id);

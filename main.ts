@@ -1,9 +1,14 @@
 import { Application, Router } from "@oak/oak";
 import bookRouter from "./book.routes.ts";
+import authRouter from "./auth.routes.ts";
+import { authMiddleware } from "./auth.middleware.ts";
 import { swaggerSpec } from "./swagger.ts";
 
 const app = new Application();
 const router = new Router();
+
+app.use(authRouter.routes());
+app.use(authRouter.allowedMethods());
 
 router.get("/api-docs", (ctx) => {
   ctx.response.body = `<!DOCTYPE html>
