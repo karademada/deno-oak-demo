@@ -3,7 +3,9 @@
     "dev": "deno run --watch --unstable-kv --allow-net src/main.ts",
     "debug": "deno run --watch --unstable-kv --allow-net --inspect-brk src/main.ts",
     "start": "deno run --unstable-kv --allow-net src/main.ts",
-    "test": "deno test --unstable-kv --allow-net src/"
+    "test": "deno test --unstable-kv --allow-net src/",
+    "test:coverage": "deno test --unstable-kv --allow-net --coverage=coverage src/",
+    "coverage": "deno coverage coverage --lcov --output=coverage.lcov"
   },
   "imports": {
     "@oak/oak": "jsr:@oak/oak@^17.1.6",
