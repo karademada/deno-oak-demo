@@ -20,8 +20,8 @@ export class AuthController {
   private setupRoutes() {
     this.router
       .post("/register", validateBody(registerSchema), errorHandler(async (ctx) => {
-        const { email, password } = await ctx.request.body.json();
-        const user = await this.register.execute(email, password);
+        const { email, password, role } = await ctx.request.body.json();
+        const user = await this.register.execute(email, password, role);
         ctx.response.status = 201;
         ctx.response.body = user.toResponse();
       }))

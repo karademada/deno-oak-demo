@@ -46,7 +46,24 @@ export const swaggerSpec = {
         properties: {
           id: { type: "string" },
           email: { type: "string" },
+          role: { type: "string", enum: ["USER", "ADMIN"] },
           createdAt: { type: "string" },
+        },
+      },
+      UpdateUserRole: {
+        type: "object",
+        required: ["role"],
+        properties: {
+          role: { type: "string", enum: ["USER", "ADMIN"] },
+        },
+      },
+      CreateUser: {
+        type: "object",
+        required: ["email", "password", "role"],
+        properties: {
+          email: { type: "string", format: "email" },
+          password: { type: "string", minLength: 6 },
+          role: { type: "string", enum: ["USER", "ADMIN"] },
         },
       },
       Register: {
@@ -55,6 +72,7 @@ export const swaggerSpec = {
         properties: {
           email: { type: "string", format: "email" },
           password: { type: "string", minLength: 6 },
+          role: { type: "string", enum: ["USER", "ADMIN"] },
         },
       },
       Login: {
@@ -127,6 +145,72 @@ export const swaggerSpec = {
         responses: {
           201: { description: "Book created", content: { "application/json": { schema: { $ref: "#/components/schemas/Book" } } } },
           400: { description: "Validation error" },
+        },
+      },
+    },
+    "/api/users": {
+      post: {
+        summary: "Create user (Admin only)",
+        tags: ["Users"],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/CreateUser" } } },
+        },
+        responses: {
+          201: { description: "User created", content: { "application/json": { schema: { $ref: "#/components/schemas/User" } } } },
+          400: { description: "User already exists" },
+          403: { description: "Forbidden" },
+        },
+      },
+      get: {
+        summary: "Get all users (Admin only)",
+        tags: ["Users"],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of users", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/User" } } } } },
+          403: { description: "Forbidden" },
+        },
+      },
+    },
+    "/api/users/{id}": {
+      get: {
+        summary: "Get user by ID (Admin only)",
+        tags: ["Users"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "User found", content: { "application/json": { schema: { $ref: "#/components/schemas/User" } } } },
+          404: { description: "User not found" },
+          403: { description: "Forbidden" },
+        },
+      },
+      delete: {
+        summary: "Delete user (Admin only)",
+        tags: ["Users"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          204: { description: "User deleted" },
+          404: { description: "User not found" },
+          403: { description: "Forbidden" },
+        },
+      },
+    },
+    "/api/users/{id}/role": {
+      patch: {
+        summary: "Update user role (Admin only)",
+        tags: ["Users"],
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/UpdateUserRole" } } },
+        },
+        responses: {
+          200: { description: "User role updated", content: { "application/json": { schema: { $ref: "#/components/schemas/User" } } } },
+          404: { description: "User not found" },
+          403: { description: "Forbidden" },
         },
       },
     },

@@ -8,14 +8,23 @@ import { UpdateBookUseCase } from "./application/book/update-book.usecase.ts";
 import { DeleteBookUseCase } from "./application/book/delete-book.usecase.ts";
 import { RegisterUseCase } from "./application/auth/register.usecase.ts";
 import { LoginUseCase } from "./application/auth/login.usecase.ts";
+import { CreateUserUseCase } from "./application/user/create-user.usecase.ts";
+import { GetUsersUseCase } from "./application/user/get-users.usecase.ts";
+import { GetUserByIdUseCase } from "./application/user/get-user-by-id.usecase.ts";
+import { UpdateUserRoleUseCase } from "./application/user/update-user-role.usecase.ts";
+import { DeleteUserUseCase } from "./application/user/delete-user.usecase.ts";
 import { BookController } from "./infrastructure/http/book.controller.ts";
 import { AuthController } from "./infrastructure/http/auth.controller.ts";
+import { UserController } from "./infrastructure/http/user.controller.ts";
+import { seedAdminUser } from "./infrastructure/persistence/seed.ts";
 import { swaggerSpec } from "../swagger.ts";
 
 const kv = await Deno.openKv();
 
 const bookRepository = new KvBookRepository(kv);
 const userRepository = new KvUserRepository(kv);
+
+await seedAdminUser(userRepository);
 
 const createBook = new CreateBookUseCase(bookRepository);
 const getBooks = new GetBooksUseCase(bookRepository);
@@ -24,9 +33,15 @@ const updateBook = new UpdateBookUseCase(bookRepository);
 const deleteBook = new DeleteBookUseCase(bookRepository);
 const register = new RegisterUseCase(userRepository);
 const login = new LoginUseCase(userRepository);
+const createUser = new CreateUserUseCase(userRepository);
+const getUsers = new GetUsersUseCase(userRepository);
+const getUserById = new GetUserByIdUseCase(userRepository);
+const updateUserRole = new UpdateUserRoleUseCase(userRepository);
+const deleteUser = new DeleteUserUseCase(userRepository);
 
 const bookController = new BookController(createBook, getBooks, getBookById, updateBook, deleteBook);
 const authController = new AuthController(register, login);
+const userController = new UserController(createUser, getUsers, getUserById, updateUserRole, deleteUser, userRepository);
 
 const app = new Application();
 const router = new Router();
@@ -34,6 +49,8 @@ router.prefix("/api");
 
 router.use(authController.router.routes());
 router.use(authController.router.allowedMethods());
+router.use(userController.router.routes());
+router.use(userController.router.allowedMethods());
 router.use(bookController.router.routes());
 router.use(bookController.router.allowedMethods());
 

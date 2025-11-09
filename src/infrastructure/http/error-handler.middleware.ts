@@ -2,6 +2,7 @@ import { Context } from "@oak/oak";
 import { NotFoundError } from "../../shared/errors/not-found.error.ts";
 import { UnauthorizedError } from "../../shared/errors/unauthorized.error.ts";
 import { ConflictError } from "../../shared/errors/conflict.error.ts";
+import { ForbiddenError } from "../../shared/errors/forbidden.error.ts";
 
 export const errorHandler = (handler: (ctx: Context) => Promise<void>) => {
   return async (ctx: Context) => {
@@ -16,6 +17,9 @@ export const errorHandler = (handler: (ctx: Context) => Promise<void>) => {
         ctx.response.body = { message: error.message };
       } else if (error instanceof ConflictError) {
         ctx.response.status = 400;
+        ctx.response.body = { message: error.message };
+      } else if (error instanceof ForbiddenError) {
+        ctx.response.status = 403;
         ctx.response.body = { message: error.message };
       } else {
         console.error("Unexpected error:", error);

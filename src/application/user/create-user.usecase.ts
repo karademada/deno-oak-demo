@@ -3,10 +3,10 @@ import { User, UserRole } from "../../domain/user/user.entity.ts";
 import { UserRepository } from "../../domain/user/user.repository.ts";
 import { ConflictError } from "../../shared/errors/conflict.error.ts";
 
-export class RegisterUseCase {
+export class CreateUserUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(email: string, password: string, role?: UserRole): Promise<User> {
+  async execute(email: string, password: string, role: UserRole): Promise<User> {
     const existing = await this.userRepository.findByEmail(email);
     if (existing) throw new ConflictError("User already exists");
 
