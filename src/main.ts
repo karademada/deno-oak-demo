@@ -35,7 +35,7 @@ router.get("/api-docs", (ctx) => {
   ctx.response.body = `<!DOCTYPE html>
 <html>
 <head>
-  <title>API Documentation</title>
+  <title>API Documentation Clean</title>
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
 </head>
 <body>
