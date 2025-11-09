@@ -30,8 +30,16 @@ const authController = new AuthController(register, login);
 
 const app = new Application();
 const router = new Router();
+router.prefix("/api");
 
-router.get("/api-docs", (ctx) => {
+router.use(authController.router.routes());
+router.use(authController.router.allowedMethods());
+router.use(bookController.router.routes());
+router.use(bookController.router.allowedMethods());
+
+const docsRouter = new Router();
+
+docsRouter.get("/api-docs", (ctx) => {
   ctx.response.body = `<!DOCTYPE html>
 <html>
 <head>
@@ -52,16 +60,14 @@ router.get("/api-docs", (ctx) => {
   ctx.response.type = "text/html";
 });
 
-router.get("/api-docs.json", (ctx) => {
+docsRouter.get("/api-docs.json", (ctx) => {
   ctx.response.body = swaggerSpec;
   ctx.response.type = "application/json";
 });
 
+app.use(docsRouter.routes());
 app.use(router.routes());
-app.use(authController.router.routes());
-app.use(authController.router.allowedMethods());
-app.use(bookController.router.routes());
-app.use(bookController.router.allowedMethods());
+app.use(router.allowedMethods());
 
 console.log("Server is running on http://localhost:8000");
 console.log("API Documentation: http://localhost:8000/api-docs");

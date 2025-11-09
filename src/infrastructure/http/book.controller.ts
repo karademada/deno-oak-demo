@@ -1,4 +1,4 @@
-import { Router } from "@oak/oak";
+import { Router, RouterContext } from "@oak/oak";
 import { CreateBookUseCase } from "../../application/book/create-book.usecase.ts";
 import { GetBooksUseCase } from "../../application/book/get-books.usecase.ts";
 import { GetBookByIdUseCase } from "../../application/book/get-book-by-id.usecase.ts";
@@ -20,7 +20,7 @@ export class BookController {
     private readonly deleteBook: DeleteBookUseCase
   ) {
     this.router = new Router();
-    this.router.prefix("/api/books");
+    this.router.prefix("/books");
     this.setupRoutes();
   }
 
@@ -31,7 +31,7 @@ export class BookController {
         ctx.response.body = books;
       }))
       .get("/:id", authMiddleware, errorHandler(async (ctx) => {
-        const book = await this.getBookById.execute(ctx.params.id!);
+        const book = await this.getBookById.execute((ctx as RouterContext<"/books/:id">).params.id);
         ctx.response.body = book;
       }))
       .post("/", authMiddleware, validateBody(createBookSchema), errorHandler(async (ctx) => {
@@ -42,11 +42,11 @@ export class BookController {
       }))
       .patch("/:id", authMiddleware, validateBody(updateBookSchema), errorHandler(async (ctx) => {
         const data = await ctx.request.body.json();
-        const book = await this.updateBook.execute(ctx.params.id!, data);
+        const book = await this.updateBook.execute((ctx as RouterContext<"/books/:id">).params.id, data);
         ctx.response.body = book;
       }))
       .delete("/:id", authMiddleware, errorHandler(async (ctx) => {
-        await this.deleteBook.execute(ctx.params.id!);
+        await this.deleteBook.execute((ctx as RouterContext<"/books/:id">).params.id);
         ctx.response.status = 204;
       }));
   }

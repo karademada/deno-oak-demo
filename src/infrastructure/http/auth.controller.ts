@@ -13,7 +13,7 @@ export class AuthController {
     private readonly login: LoginUseCase
   ) {
     this.router = new Router();
-    this.router.prefix("/api/auth");
+    this.router.prefix("/auth");
     this.setupRoutes();
   }
 
