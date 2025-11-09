@@ -1,7 +1,6 @@
 import { Application, Router } from "@oak/oak";
 import bookRouter from "./book.routes.ts";
 import authRouter from "./auth.routes.ts";
-import { authMiddleware } from "./auth.middleware.ts";
 import { swaggerSpec } from "./swagger.ts";
 
 const app = new Application();

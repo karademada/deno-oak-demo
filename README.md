@@ -73,17 +73,22 @@ See [api-requests.sh](./api-requests.sh) for book API examples.
 
 ## Project Structure
 
+This project follows **Clean Architecture**, **DDD**, and **TDD** principles.
+
 ```
-├── main.ts              # Application entry point
-├── auth.routes.ts       # Authentication routes
-├── auth.middleware.ts   # JWT authentication middleware
-├── auth.validation.ts   # Auth validation schemas
-├── book.routes.ts       # Book routes (protected)
-├── book.types.ts        # Book TypeScript types
-├── user.types.ts        # User TypeScript types
-├── validation.ts        # Joi validation schemas
-├── swagger.ts           # OpenAPI specification
-├── config.ts            # JWT configuration
-├── *_test.ts           # Test files
-└── deno.json           # Deno configuration
+src/
+├── domain/              # Business entities and rules
+│   ├── book/           # Book entity and repository interface
+│   └── user/           # User entity and repository interface
+├── application/         # Use cases (business logic)
+│   ├── book/           # Book use cases
+│   └── auth/           # Auth use cases
+├── infrastructure/      # External concerns
+│   ├── persistence/    # Repository implementations (KV)
+│   └── http/           # Controllers, middleware, routes
+└── shared/             # Shared utilities
+    ├── errors/         # Custom error classes
+    └── config.ts       # Configuration
 ```
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed architecture documentation.

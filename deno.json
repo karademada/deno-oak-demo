@@ -1,8 +1,8 @@
 {
   "tasks": {
-    "dev": "deno run --watch --unstable-kv --allow-net main.ts",
-    "start": "deno run --unstable-kv --allow-net main.ts",
-    "test": "deno test --unstable-kv --allow-net"
+    "dev": "deno run --watch --unstable-kv --allow-net src/main.ts",
+    "start": "deno run --unstable-kv --allow-net src/main.ts",
+    "test": "deno test --unstable-kv --allow-net src/"
   },
   "imports": {
     "@oak/oak": "jsr:@oak/oak@^17.1.6",
